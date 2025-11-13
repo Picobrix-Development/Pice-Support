@@ -40,7 +40,7 @@ npm install
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173`
+The app will be available at `http://localhost:5174`
 
 ### Available Pages
 
@@ -57,15 +57,47 @@ npm run build
 
 ## Deployment
 
-Deploy to Azure Static Web Apps using GitHub Actions or Azure CLI.
+### Production URLs
+
+- **Custom Domain**: https://support.popuppiratedice.com ✅
+- **Azure URL**: https://delightful-pond-06af7b000.3.azurestaticapps.net
+- **Resource Group**: PiceConsoleResource
+- **Static Web App**: Pice-Support-Web
+
+### Automatic Deployment
+
+This project uses GitHub Actions for automatic deployment:
+
+1. Push changes to `main` branch:
+```bash
+git add .
+git commit -m "your commit message"
+git push
+```
+
+2. GitHub Actions automatically builds and deploys to Azure Static Web Apps
+3. Check deployment status: https://github.com/Picobrix-Development/Pice-Support/actions
 
 ### Environment Variables (Production)
 
 Set in Azure Static Web Apps configuration:
 
+**Azure Portal**:
+- Navigate to: Static Web Apps → Pice-Support-Web → Configuration
+- Add Application setting:
+  ```
+  VITE_LIVE_API_URL=https://pice-console-live-api.azurewebsites.net/api/v1
+  ```
+
+**Azure CLI**:
+```bash
+az staticwebapp appsettings set \
+  --name Pice-Support-Web \
+  --resource-group PiceConsoleResource \
+  --setting-names VITE_LIVE_API_URL=https://pice-console-live-api.azurewebsites.net/api/v1
 ```
-VITE_LIVE_API_URL=https://pice-console-live-api.azurewebsites.net/api/v1
-```
+
+For detailed deployment instructions, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md).
 
 ## Project Structure
 
