@@ -271,18 +271,20 @@
 		<!-- Main Card -->
 		<div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6">
 			<!-- Title -->
-			<div class="text-center mb-8">
-				<div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-					<svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<div class="flex items-center mb-4 pb-4 border-b border-gray-200">
+				<div class="w-12 h-12 md:w-14 md:h-14 bg-green-100 rounded-2xl flex items-center justify-center flex-shrink-0 mr-3 md:mr-4">
+					<svg class="w-6 h-6 md:w-7 md:h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
 					</svg>
 				</div>
-				<h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-					{t('title')}
-				</h1>
-				<p class="text-gray-600">
-					{t('subtitle')}
-				</p>
+				<div class="flex-1">
+					<h1 class="text-lg md:text-xl font-bold text-gray-900">
+						{t('title')}
+					</h1>
+					<p class="text-xs md:text-sm text-gray-600 mt-0.5">
+						{t('subtitle')}
+					</p>
+				</div>
 			</div>
 
 			<!-- Form -->

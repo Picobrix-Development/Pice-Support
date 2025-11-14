@@ -627,6 +627,7 @@ To proceed with deletion, please enter the following:
 				inquiry_tab: '1:1 문의',
 				history_tab: '내 문의 내역',
 				language_name: '한국어',
+				back_to_menu: '메뉴로 돌아가기',
 
 				// Form fields
 				inquiry_type: '문의 유형',
@@ -692,6 +693,7 @@ To proceed with deletion, please enter the following:
 				inquiry_tab: '1:1 Inquiry',
 				history_tab: 'My Inquiries',
 				language_name: 'English',
+				back_to_menu: 'Back to Menu',
 
 				// Form fields
 				inquiry_type: 'Inquiry Type',
@@ -757,6 +759,7 @@ To proceed with deletion, please enter the following:
 				inquiry_tab: '1:1 お問い合わせ',
 				history_tab: 'お問い合わせ履歴',
 				language_name: '日本語',
+				back_to_menu: 'メニューに戻る',
 
 				// Form fields
 				inquiry_type: 'お問い合わせタイプ',
@@ -825,58 +828,84 @@ To proceed with deletion, please enter the following:
 	<title>Help Center - Pice Console</title>
 </svelte:head>
 
-<div class="h-screen overflow-y-auto bg-gray-50">
-	<div class="max-w-4xl mx-auto">
-		<!-- Sticky Header with Tabs and Language Selector -->
-		<div class="sticky top-0 bg-white border-b border-gray-200 px-3 py-2.5 md:px-4 md:py-3 z-10 shadow-sm">
-			<div class="flex items-center justify-between">
-				<!-- Tab Navigation -->
-				{#key language}
-				<div class="flex space-x-3 md:space-x-6 flex-1">
-					<button
-						class="px-2 py-1.5 md:px-3 md:py-2 text-sm md:text-base font-medium border-b-2 transition-colors {activeTab === 'inquiry' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-800 hover:text-gray-700'}"
-						on:click={() => activeTab = 'inquiry'}
-					>
-						{t('inquiry_tab')}
-					</button>
-					<button
-						class="px-2 py-1.5 md:px-3 md:py-2 text-sm md:text-base font-medium border-b-2 transition-colors {activeTab === 'history' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-800 hover:text-gray-700'}"
-						on:click={() => activeTab = 'history'}
-					>
-						{t('history_tab')}
-					</button>
-				</div>
-				{/key}
+<div class="min-h-screen bg-gray-50">
+	<div class="max-w-3xl mx-auto px-4 py-8">
+		<!-- Header with Back Button -->
+		<div class="mb-6">
+			<a
+				href="/support{$page.url.search}"
+				class="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors mb-4"
+			>
+				<svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+				</svg>
+				{t('back_to_menu')}
+			</a>
 
-				<!-- Language Selector: Hidden in Unity WebView -->
-				{#if !isUnityWebView}
+			<!-- Language Selector (hidden in Unity WebView) -->
+			{#if !isUnityWebView}
+				<div class="flex justify-end mb-4">
 					<select
 						bind:value={language}
-						class="px-2 py-1 pr-6 text-sm border border-gray-300 rounded text-gray-900 bg-white appearance-none bg-no-repeat bg-right flex-shrink-0 ml-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
-						style="background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3E%3Cpath stroke=\'%236b7280\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3E%3C/svg%3E'); background-position: right 0.25rem center; background-size: 1.5em 1.5em;"
+						class="px-3 py-2 pr-8 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white appearance-none bg-no-repeat bg-right focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+						style="background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3E%3Cpath stroke=\'%236b7280\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3E%3C/svg%3E'); background-position: right 0.5rem center; background-size: 1.5em 1.5em;"
 					>
 						<option value="KOR">한국어</option>
 						<option value="ENG">English</option>
 						<option value="JPN">日本語</option>
 					</select>
-				{:else}
-					<!-- Unity WebView indicator (optional) -->
-					<div class="text-xs text-gray-500 flex items-center space-x-1 flex-shrink-0 ml-2">
+				</div>
+			{:else}
+				<div class="flex justify-end mb-4">
+					<div class="text-xs text-gray-500 flex items-center space-x-1">
 						<span class="w-2 h-2 bg-green-500 rounded-full"></span>
 						<span>{t('language_name')}</span>
 					</div>
-				{/if}
-			</div>
+				</div>
+			{/if}
 		</div>
 
-		<!-- Content Area with padding -->
-		<div class="px-3 py-3 md:px-4 md:py-6">
 		{#key language}
+		<!-- Main Card -->
+		<div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6">
+			<!-- Tab Navigation -->
+			<div class="border-b border-gray-200 mb-6">
+				<div class="flex space-x-6">
+					<button
+						class="px-1 py-3 text-base font-medium border-b-2 transition-colors {activeTab === 'inquiry' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-900'}"
+						on:click={() => activeTab = 'inquiry'}
+					>
+						{t('inquiry_tab')}
+					</button>
+					<button
+						class="px-1 py-3 text-base font-medium border-b-2 transition-colors {activeTab === 'history' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-900'}"
+						on:click={() => activeTab = 'history'}
+					>
+						{t('history_tab')}
+					</button>
+				</div>
+			</div>
 
 		<!-- 1:1 문의 Tab -->
 		{#if activeTab === 'inquiry'}
-			<div class="bg-white rounded-lg shadow-sm border p-3 md:p-6">
-				<form on:submit|preventDefault={submitInquiry} class="space-y-3 md:space-y-6">
+			<!-- Title Section -->
+			<div class="flex items-center mb-4 pb-4 border-b border-gray-200">
+				<div class="w-12 h-12 md:w-14 md:h-14 bg-blue-100 rounded-2xl flex items-center justify-center flex-shrink-0 mr-3 md:mr-4">
+					<svg class="w-6 h-6 md:w-7 md:h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+					</svg>
+				</div>
+				<div class="flex-1">
+					<h2 class="text-lg md:text-xl font-bold text-gray-900">
+						{t('inquiry_tab')}
+					</h2>
+					<p class="text-xs md:text-sm text-gray-600 mt-0.5">
+						{language === 'KOR' ? '게임 관련 문의사항을 남겨주세요' : language === 'JPN' ? 'ゲーム関連のお問い合わせを送信してください' : 'Submit your game-related inquiries'}
+					</p>
+				</div>
+			</div>
+
+			<form on:submit|preventDefault={submitInquiry} class="space-y-6">
 					<!-- 문의 유형 -->
 					<div>
 						<label class="block text-xs md:text-sm font-medium text-gray-900 mb-1 md:mb-2">
@@ -1102,29 +1131,49 @@ To proceed with deletion, please enter the following:
 							{submitError}
 						</div>
 					{/if}
-				</form>
-			</div>
+			</form>
 		{/if}
 
 		<!-- 내 문의 내역 Tab -->
 		{#if activeTab === 'history'}
-			<div class="bg-white rounded-lg shadow-sm border">
-				{#if isLoadingTickets}
-					<div class="p-4 md:p-8 text-center text-sm md:text-base text-gray-800">
-						{t('loading_tickets')}
-					</div>
-				{:else if tickets.length === 0}
-					<div class="p-4 md:p-8 text-center text-sm md:text-base text-gray-800">
-						{t('no_tickets')}
-					</div>
-				{:else}
-					<div class="divide-y divide-gray-200">
-						{#each tickets as ticket}
-							<button
-								type="button"
-								on:click={() => showTicketDetail(ticket)}
-								class="w-full text-left p-3 md:p-6 hover:bg-gray-50 transition-colors cursor-pointer"
-							>
+			<!-- Title Section -->
+			<div class="flex items-center mb-4 pb-4 border-b border-gray-200">
+				<div class="w-12 h-12 md:w-14 md:h-14 bg-purple-100 rounded-2xl flex items-center justify-center flex-shrink-0 mr-3 md:mr-4">
+					<svg class="w-6 h-6 md:w-7 md:h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+					</svg>
+				</div>
+				<div class="flex-1">
+					<h2 class="text-lg md:text-xl font-bold text-gray-900">
+						{t('history_tab')}
+					</h2>
+					<p class="text-xs md:text-sm text-gray-600 mt-0.5">
+						{language === 'KOR' ? '내가 작성한 문의 내역을 확인하세요' : language === 'JPN' ? '作成したお問い合わせ履歴を確認してください' : 'View your inquiry history'}
+					</p>
+				</div>
+			</div>
+
+			{#if isLoadingTickets}
+				<div class="p-8 text-center text-gray-600">
+					<svg class="animate-spin h-8 w-8 text-blue-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+						<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+					</svg>
+					{t('loading_tickets')}
+				</div>
+			{:else if tickets.length === 0}
+				<div class="p-8 text-center text-gray-600">
+					<div class="text-gray-400 text-6xl mb-4">📋</div>
+					{t('no_tickets')}
+				</div>
+			{:else}
+				<div class="space-y-3">
+					{#each tickets as ticket}
+						<button
+							type="button"
+							on:click={() => showTicketDetail(ticket)}
+							class="w-full text-left p-4 md:p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
+						>
 								<div class="flex justify-between items-start">
 									<div class="flex-1">
 										<div class="flex items-center space-x-2 md:space-x-3 mb-1 md:mb-2">
@@ -1153,12 +1202,13 @@ To proceed with deletion, please enter the following:
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
 									</svg>
 								</div>
-							</button>
-						{/each}
-					</div>
-				{/if}
-			</div>
+						</button>
+					{/each}
+				</div>
+			{/if}
 		{/if}
+		</div>
+		{/key}
 
 		<!-- Ticket Detail Modal -->
 		{#if showDetailModal && selectedTicket}
@@ -1303,9 +1353,6 @@ To proceed with deletion, please enter the following:
 				</div>
 			</div>
 		{/if}
-
-		{/key}
-		</div>
 	</div>
 </div>
 

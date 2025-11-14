@@ -97,10 +97,10 @@
 	<title>{t('title')} - Pice Console</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-	<div class="max-w-4xl mx-auto px-4 py-8">
+<div class="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center">
+	<div class="max-w-4xl mx-auto px-4 py-6 md:py-10 w-full">
 		<!-- Header -->
-		<div class="text-center mb-12">
+		<div class="text-center mb-6 md:mb-10">
 			<!-- Language Selector (hidden in Unity WebView) -->
 			{#if !isUnityWebView}
 				<div class="flex justify-end mb-4">
@@ -123,20 +123,20 @@
 				</div>
 			{/if}
 
-			<h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+			<h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4">
 				{t('title')}
 			</h1>
-			<p class="text-lg md:text-xl text-gray-600">
+			<p class="text-base md:text-lg lg:text-xl text-gray-600">
 				{t('subtitle')}
 			</p>
 		</div>
 
 		<!-- Menu Cards -->
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 			<!-- Inquiry Card -->
 			<button
 				on:click={goToInquiry}
-				class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 text-left overflow-hidden transform hover:-translate-y-1"
+				class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 md:p-8 text-left overflow-hidden transform hover:-translate-y-1"
 			>
 				<!-- Background Gradient -->
 				<div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
@@ -144,26 +144,26 @@
 				<!-- Content -->
 				<div class="relative z-10">
 					<!-- Icon -->
-					<div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-200 transition-colors duration-300">
-						<svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<div class="w-14 h-14 md:w-16 md:h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:bg-blue-200 transition-colors duration-300">
+						<svg class="w-7 h-7 md:w-8 md:h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
 						</svg>
 					</div>
 
 					<!-- Title -->
-					<h2 class="text-2xl font-bold text-gray-900 mb-3">
+					<h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
 						{t('support_title')}
 					</h2>
 
 					<!-- Description -->
-					<p class="text-gray-600 mb-6">
+					<p class="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
 						{t('support_description')}
 					</p>
 
 					<!-- Arrow Icon -->
-					<div class="flex items-center text-blue-600 font-semibold group-hover:translate-x-2 transition-transform duration-300">
+					<div class="flex items-center text-blue-600 text-sm md:text-base font-semibold group-hover:translate-x-2 transition-transform duration-300">
 						<span class="mr-2">{language === 'KOR' ? '바로가기' : language === 'JPN' ? '進む' : 'Go'}</span>
-						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
 						</svg>
 					</div>
@@ -173,7 +173,7 @@
 			<!-- Redeem Card -->
 			<button
 				on:click={goToRedeem}
-				class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 text-left overflow-hidden transform hover:-translate-y-1"
+				class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 md:p-8 text-left overflow-hidden transform hover:-translate-y-1"
 			>
 				<!-- Background Gradient -->
 				<div class="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
@@ -181,26 +181,26 @@
 				<!-- Content -->
 				<div class="relative z-10">
 					<!-- Icon -->
-					<div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-green-200 transition-colors duration-300">
-						<svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<div class="w-14 h-14 md:w-16 md:h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:bg-green-200 transition-colors duration-300">
+						<svg class="w-7 h-7 md:w-8 md:h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
 						</svg>
 					</div>
 
 					<!-- Title -->
-					<h2 class="text-2xl font-bold text-gray-900 mb-3">
+					<h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
 						{t('redeem_title')}
 					</h2>
 
 					<!-- Description -->
-					<p class="text-gray-600 mb-6">
+					<p class="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
 						{t('redeem_description')}
 					</p>
 
 					<!-- Arrow Icon -->
-					<div class="flex items-center text-green-600 font-semibold group-hover:translate-x-2 transition-transform duration-300">
+					<div class="flex items-center text-green-600 text-sm md:text-base font-semibold group-hover:translate-x-2 transition-transform duration-300">
 						<span class="mr-2">{language === 'KOR' ? '바로가기' : language === 'JPN' ? '進む' : 'Go'}</span>
-						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
 						</svg>
 					</div>
@@ -210,7 +210,7 @@
 
 		<!-- Footer Info -->
 		{#if isUnityWebView}
-			<div class="mt-12 text-center text-sm text-gray-500">
+			<div class="mt-8 md:mt-12 text-center text-xs md:text-sm text-gray-500">
 				<p>Pop Up Pirate Dice</p>
 			</div>
 		{/if}
