@@ -10,33 +10,42 @@
 	let uid = '';
 	let locale = '';
 
-	onMount(() => {
-		if (browser) {
-			// Unity WebView URL 파라미터 처리
-			const urlParams = new URLSearchParams($page.url.searchParams);
-			uid = urlParams.get('uid') || '';
-			locale = urlParams.get('locale') || '';
+	// Reactive statement to watch URL parameter changes
+	$: if (browser && $page.url.searchParams) {
+		uid = $page.url.searchParams.get('uid') || '';
+		const urlLocale = $page.url.searchParams.get('locale') || '';
 
-			// Unity에서 전달된 파라미터 확인
-			if (uid) {
-				isUnityWebView = true;
-				console.log('Unity WebView detected with UID:', uid);
-			}
+		// Unity에서 전달된 파라미터 확인
+		if (uid && !isUnityWebView) {
+			isUnityWebView = true;
+			console.log('Unity WebView detected with UID:', uid);
+		}
 
-			// 언어 설정
-			if (locale) {
-				if (locale.startsWith('ko') || locale.toLowerCase() === 'kor') {
-					language = 'KOR';
-				} else if (locale.startsWith('en') || locale.toLowerCase() === 'eng') {
-					language = 'ENG';
-				} else if (locale.startsWith('ja') || locale.toLowerCase() === 'jpn') {
-					language = 'JPN';
-				} else {
-					language = 'ENG'; // fallback
-				}
+		// 언어 설정 (URL 파라미터가 있을 때만)
+		if (urlLocale) {
+			locale = urlLocale;
+			if (urlLocale.startsWith('ko') || urlLocale.toLowerCase() === 'kor') {
+				language = 'KOR';
+			} else if (urlLocale.startsWith('en') || urlLocale.toLowerCase() === 'eng') {
+				language = 'ENG';
+			} else if (urlLocale.startsWith('ja') || urlLocale.toLowerCase() === 'jpn') {
+				language = 'JPN';
+			} else {
+				language = 'ENG'; // fallback
 			}
 		}
-	});
+	}
+
+	// Update locale when language changes manually
+	$: if (language) {
+		if (language === 'KOR') {
+			locale = 'kor';
+		} else if (language === 'ENG') {
+			locale = 'eng';
+		} else if (language === 'JPN') {
+			locale = 'jpn';
+		}
+	}
 
 	// Navigate to inquiry page with parameters
 	function goToInquiry() {
@@ -58,39 +67,47 @@
 		goto(url);
 	}
 
+	// Translation data
+	const translationsData = {
+		KOR: {
+			title: '고객센터',
+			subtitle: '무엇을 도와드릴까요?',
+			support_title: '1:1 문의',
+			support_description: '게임 관련 문의사항을 남겨주세요',
+			redeem_title: '쿠폰 입력',
+			redeem_description: '쿠폰 코드를 입력하고 보상을 받으세요',
+			go_button: '바로가기',
+			language_name: '한국어'
+		},
+		ENG: {
+			title: 'Customer Support',
+			subtitle: 'How can we help you?',
+			support_title: '1:1 Inquiry',
+			support_description: 'Submit your game-related inquiries',
+			redeem_title: 'Redeem Code',
+			redeem_description: 'Enter coupon code and receive rewards',
+			go_button: 'Go',
+			language_name: 'English'
+		},
+		JPN: {
+			title: 'カスタマーサポート',
+			subtitle: 'どのようなご用件でしょうか？',
+			support_title: '1:1 お問い合わせ',
+			support_description: 'ゲーム関連のお問い合わせを送信してください',
+			redeem_title: 'クーポン入力',
+			redeem_description: 'クーポンコードを入力して報酬を受け取ります',
+			go_button: '進む',
+			language_name: '日本語'
+		}
+	};
+
+	// Reactive current translations
+	$: currentTranslations = translationsData[language] || translationsData['ENG'];
+
 	// Get translated text
-	function t(key) {
-		const translations = {
-			KOR: {
-				title: '고객센터',
-				subtitle: '무엇을 도와드릴까요?',
-				support_title: '1:1 문의',
-				support_description: '게임 관련 문의사항을 남겨주세요',
-				redeem_title: '쿠폰 입력',
-				redeem_description: '쿠폰 코드를 입력하고 보상을 받으세요',
-				language_name: '한국어'
-			},
-			ENG: {
-				title: 'Customer Support',
-				subtitle: 'How can we help you?',
-				support_title: '1:1 Inquiry',
-				support_description: 'Submit your game-related inquiries',
-				redeem_title: 'Redeem Code',
-				redeem_description: 'Enter coupon code and receive rewards',
-				language_name: 'English'
-			},
-			JPN: {
-				title: 'カスタマーサポート',
-				subtitle: 'どのようなご用件でしょうか？',
-				support_title: '1:1 お問い合わせ',
-				support_description: 'ゲーム関連のお問い合わせを送信してください',
-				redeem_title: 'クーポン入力',
-				redeem_description: 'クーポンコードを入力して報酬を受け取ります',
-				language_name: '日本語'
-			}
-		};
-		return translations[language]?.[key] || key;
-	}
+	$: t = (key) => {
+		return currentTranslations?.[key] || key;
+	};
 </script>
 
 <svelte:head>
@@ -162,7 +179,7 @@
 
 					<!-- Arrow Icon -->
 					<div class="flex items-center text-blue-600 text-sm md:text-base font-semibold group-hover:translate-x-2 transition-transform duration-300">
-						<span class="mr-2">{language === 'KOR' ? '바로가기' : language === 'JPN' ? '進む' : 'Go'}</span>
+						<span class="mr-2">{t('go_button')}</span>
 						<svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
 						</svg>
@@ -199,7 +216,7 @@
 
 					<!-- Arrow Icon -->
 					<div class="flex items-center text-green-600 text-sm md:text-base font-semibold group-hover:translate-x-2 transition-transform duration-300">
-						<span class="mr-2">{language === 'KOR' ? '바로가기' : language === 'JPN' ? '進む' : 'Go'}</span>
+						<span class="mr-2">{t('go_button')}</span>
 						<svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
 						</svg>
