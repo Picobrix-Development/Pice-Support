@@ -191,13 +191,6 @@
 			</div>
 		</button>
 	</div>
-
-	<!-- Footer Info -->
-	{#if isUnityWebView}
-		<div class="footer">
-			<p>Pop Up Pirate Dice</p>
-		</div>
-	{/if}
 </div>
 
 <style>
@@ -425,18 +418,6 @@
 	.arrow-icon {
 		width: 14px;
 		height: 14px;
-	}
-
-	/* Footer */
-	.footer {
-		text-align: center;
-		padding: 20px;
-		color: #6b7280;
-		font-size: 12px;
-	}
-
-	.footer p {
-		margin: 0;
 	}
 
 	/* Mobile Responsive */
