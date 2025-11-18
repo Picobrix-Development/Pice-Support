@@ -114,129 +114,449 @@
 	<title>{t('title')} - Pice Console</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center">
-	<div class="max-w-4xl mx-auto px-4 py-6 md:py-10 w-full">
-		<!-- Header -->
-		<div class="text-center mb-6 md:mb-10">
-			<!-- Language Selector (hidden in Unity WebView) -->
-			{#if !isUnityWebView}
-				<div class="flex justify-end mb-4">
-					<select
-						bind:value={language}
-						class="px-3 py-2 pr-8 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white appearance-none bg-no-repeat bg-right focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
-						style="background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3E%3Cpath stroke=\'%236b7280\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3E%3C/svg%3E'); background-position: right 0.5rem center; background-size: 1.5em 1.5em;"
-					>
-						<option value="KOR">한국어</option>
-						<option value="ENG">English</option>
-						<option value="JPN">日本語</option>
-					</select>
-				</div>
-			{:else}
-				<div class="flex justify-end mb-4">
-					<div class="text-xs text-gray-500 flex items-center space-x-1">
-						<span class="w-2 h-2 bg-green-500 rounded-full"></span>
-						<span>{t('language_name')}</span>
-					</div>
-				</div>
-			{/if}
+<div class="page-container">
+	<!-- Hero Section -->
+	<div class="hero">
+		<!-- Background Image -->
+		<img src="/images/img_pc.jpg" class="hero-bg-image" alt="Background">
 
-			<h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4">
-				{t('title')}
-			</h1>
-			<p class="text-base md:text-lg lg:text-xl text-gray-600">
-				{t('subtitle')}
-			</p>
-		</div>
-
-		<!-- Menu Cards -->
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-			<!-- Inquiry Card -->
-			<button
-				on:click={goToInquiry}
-				class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 md:p-8 text-left overflow-hidden transform hover:-translate-y-1"
-			>
-				<!-- Background Gradient -->
-				<div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-
-				<!-- Content -->
-				<div class="relative z-10">
-					<!-- Icon -->
-					<div class="w-14 h-14 md:w-16 md:h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:bg-blue-200 transition-colors duration-300">
-						<svg class="w-7 h-7 md:w-8 md:h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-						</svg>
-					</div>
-
-					<!-- Title -->
-					<h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
-						{t('support_title')}
-					</h2>
-
-					<!-- Description -->
-					<p class="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
-						{t('support_description')}
-					</p>
-
-					<!-- Arrow Icon -->
-					<div class="flex items-center text-blue-600 text-sm md:text-base font-semibold group-hover:translate-x-2 transition-transform duration-300">
-						<span class="mr-2">{t('go_button')}</span>
-						<svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-						</svg>
-					</div>
-				</div>
-			</button>
-
-			<!-- Redeem Card -->
-			<button
-				on:click={goToRedeem}
-				class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 md:p-8 text-left overflow-hidden transform hover:-translate-y-1"
-			>
-				<!-- Background Gradient -->
-				<div class="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-
-				<!-- Content -->
-				<div class="relative z-10">
-					<!-- Icon -->
-					<div class="w-14 h-14 md:w-16 md:h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:bg-green-200 transition-colors duration-300">
-						<svg class="w-7 h-7 md:w-8 md:h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
-						</svg>
-					</div>
-
-					<!-- Title -->
-					<h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
-						{t('redeem_title')}
-					</h2>
-
-					<!-- Description -->
-					<p class="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
-						{t('redeem_description')}
-					</p>
-
-					<!-- Arrow Icon -->
-					<div class="flex items-center text-green-600 text-sm md:text-base font-semibold group-hover:translate-x-2 transition-transform duration-300">
-						<span class="mr-2">{t('go_button')}</span>
-						<svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-						</svg>
-					</div>
-				</div>
-			</button>
-		</div>
-
-		<!-- Footer Info -->
-		{#if isUnityWebView}
-			<div class="mt-8 md:mt-12 text-center text-xs md:text-sm text-gray-500">
-				<p>Pop Up Pirate Dice</p>
+		<!-- Language Selector (absolute positioned, top-right) -->
+		{#if !isUnityWebView}
+			<div class="language-selector-wrapper">
+				<select
+					bind:value={language}
+					class="language-selector"
+				>
+					<option value="KOR">한국어</option>
+					<option value="ENG">English</option>
+					<option value="JPN">日本語</option>
+				</select>
+			</div>
+		{:else}
+			<div class="language-indicator">
+				<span class="status-dot"></span>
+				<span>{t('language_name')}</span>
 			</div>
 		{/if}
+
+		<!-- Logo -->
+		<div class="hero-content">
+			<img src="/images/img_logo.png" class="hero-logo" alt="Pop Up Pirate Dice">
+
+			<!-- Title -->
+			<h1 class="hero-title">{t('title')}</h1>
+			<p class="hero-subtitle">{t('subtitle')}</p>
+		</div>
 	</div>
+
+	<!-- Cards Container -->
+	<div class="cards-container">
+		<!-- Inquiry Card -->
+		<button
+			on:click={goToInquiry}
+			class="card"
+		>
+			<div class="card-icon-wrapper card-icon-blue">
+				<img src="/images/icon_neko.png" class="card-icon" alt="Inquiry">
+			</div>
+			<div class="card-content">
+				<h2 class="card-title">{t('support_title')}</h2>
+				<p class="card-description">{t('support_description')}</p>
+				<div class="card-link">
+					{t('go_button')}
+					<svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+					</svg>
+				</div>
+			</div>
+		</button>
+
+		<!-- Redeem Card -->
+		<button
+			on:click={goToRedeem}
+			class="card"
+		>
+			<div class="card-icon-wrapper card-icon-green">
+				<img src="/images/icon_coupon.png" class="card-icon" alt="Coupon">
+			</div>
+			<div class="card-content">
+				<h2 class="card-title">{t('redeem_title')}</h2>
+				<p class="card-description">{t('redeem_description')}</p>
+				<div class="card-link">
+					{t('go_button')}
+					<svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+					</svg>
+				</div>
+			</div>
+		</button>
+	</div>
+
+	<!-- Footer Info -->
+	{#if isUnityWebView}
+		<div class="footer">
+			<p>Pop Up Pirate Dice</p>
+		</div>
+	{/if}
 </div>
 
 <style>
-	/* Smooth transitions */
-	button {
-		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	/* Page Container */
+	.page-container {
+		min-height: 100vh;
+		background-color: #E8F4F8;
+		position: relative;
+		overflow-x: hidden;
+	}
+
+	/* Hero Section */
+	.hero {
+		width: 100%;
+		min-height: 300px;
+		position: relative;
+		overflow: hidden;
+		background: linear-gradient(180deg, #00BCD4 0%, #4DD0E1 100%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 40px 20px;
+	}
+
+	.hero-bg-image {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		height: 100%;
+		width: auto;
+		min-width: 100%;
+		object-fit: cover;
+		transform: translate(-50%, -50%);
+		z-index: 1;
+	}
+
+	.hero-content {
+		position: relative;
+		z-index: 10;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+	}
+
+	.hero-logo {
+		height: 157px;
+		width: auto;
+		object-fit: contain;
+	}
+
+	/* Language Selector */
+	.language-selector-wrapper {
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		z-index: 20;
+	}
+
+	.language-selector {
+		padding: 8px 32px 8px 16px;
+		border-radius: 12px;
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		background: rgba(255, 255, 255, 0.95);
+		color: #1f2937;
+		font-size: 14px;
+		font-weight: 500;
+		cursor: pointer;
+		appearance: none;
+		background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"%3E%3Cpath stroke="%236b7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4"/%3E%3C/svg%3E');
+		background-repeat: no-repeat;
+		background-position: right 8px center;
+		background-size: 20px;
+		transition: all 0.2s;
+	}
+
+	.language-selector:hover {
+		background: white;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	}
+
+	.language-selector:focus {
+		outline: none;
+		box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+	}
+
+	.language-indicator {
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		z-index: 20;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		padding: 6px 12px;
+		border-radius: 12px;
+		background: rgba(255, 255, 255, 0.9);
+		font-size: 12px;
+		color: #4b5563;
+	}
+
+	.status-dot {
+		width: 8px;
+		height: 8px;
+		background: #10b981;
+		border-radius: 50%;
+	}
+
+	/* Hero Text */
+	.hero-title {
+		font-size: 32px;
+		font-weight: 800;
+		color: white;
+		text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+		margin: 0;
+	}
+
+	.hero-subtitle {
+		font-size: 18px;
+		font-weight: 500;
+		color: white;
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+		margin: 0;
+	}
+
+	/* Cards Container */
+	.cards-container {
+		max-width: 600px;
+		margin: 0 auto;
+		padding: 24px 20px;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	/* Card */
+	.card {
+		background: white;
+		border-radius: 24px;
+		padding: 28px 24px;
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+		border: none;
+		cursor: pointer;
+		text-align: left;
+		transition: all 0.2s;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 12px;
+	}
+
+	.card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+	}
+
+	.card:active {
+		transform: translateY(0);
+	}
+
+	.card-icon-wrapper {
+		width: 80px;
+		height: 80px;
+		border-radius: 16px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+
+	.card-icon-blue {
+		background: #E3F2FD;
+	}
+
+	.card-icon-green {
+		background: #E8F5E9;
+	}
+
+	.card-icon {
+		width: 48px;
+		height: 48px;
+		object-fit: contain;
+	}
+
+	.card-content {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		width: 100%;
+	}
+
+	.card-title {
+		font-size: 22px;
+		font-weight: 700;
+		color: #1f2937;
+		margin: 0;
+	}
+
+	.card-description {
+		font-size: 14px;
+		color: #6b7280;
+		margin: 0;
+		line-height: 1.5;
+	}
+
+	.card-link {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 4px;
+		color: #3b82f6;
+		font-size: 15px;
+		font-weight: 600;
+		transition: gap 0.2s;
+		margin-top: 4px;
+	}
+
+	.card:hover .card-link {
+		gap: 8px;
+	}
+
+	.arrow-icon {
+		width: 14px;
+		height: 14px;
+	}
+
+	/* Footer */
+	.footer {
+		text-align: center;
+		padding: 20px;
+		color: #6b7280;
+		font-size: 12px;
+	}
+
+	.footer p {
+		margin: 0;
+	}
+
+	/* Mobile Responsive */
+	@media (max-width: 768px) {
+		.hero {
+			min-height: 250px;
+			padding: 30px 16px;
+		}
+
+		.hero-bg-image {
+			transform: translate(-50%, -50%);
+		}
+
+		.hero-logo {
+			height: 120px;
+		}
+
+		.language-selector-wrapper {
+			top: 12px;
+			right: 12px;
+		}
+
+		.language-selector {
+			padding: 6px 28px 6px 12px;
+			font-size: 12px;
+			background-size: 18px;
+		}
+
+		.language-indicator {
+			top: 12px;
+			right: 12px;
+			padding: 4px 10px;
+			font-size: 11px;
+		}
+
+		.status-dot {
+			width: 6px;
+			height: 6px;
+		}
+
+		.hero-title {
+			font-size: 24px;
+		}
+
+		.hero-subtitle {
+			font-size: 14px;
+		}
+
+		.cards-container {
+			padding: 20px 16px;
+			gap: 12px;
+		}
+
+		.card {
+			padding: 24px 20px;
+			gap: 10px;
+		}
+
+		.card-icon-wrapper {
+			width: 70px;
+			height: 70px;
+		}
+
+		.card-icon {
+			width: 42px;
+			height: 42px;
+		}
+
+		.card-title {
+			font-size: 20px;
+		}
+
+		.card-description {
+			font-size: 13px;
+		}
+
+		.card-link {
+			font-size: 14px;
+		}
+	}
+
+	/* Very small screens */
+	@media (max-width: 360px) {
+		.hero {
+			min-height: 200px;
+			padding: 24px 12px;
+		}
+
+		.hero-logo {
+			height: 90px;
+		}
+
+		.hero-title {
+			font-size: 20px;
+		}
+
+		.hero-subtitle {
+			font-size: 12px;
+		}
+
+		.card {
+			padding: 20px 16px;
+		}
+
+		.card-icon-wrapper {
+			width: 64px;
+			height: 64px;
+		}
+
+		.card-icon {
+			width: 38px;
+			height: 38px;
+		}
+
+		.card-title {
+			font-size: 18px;
+		}
+
+		.card-description {
+			font-size: 12px;
+		}
 	}
 </style>
