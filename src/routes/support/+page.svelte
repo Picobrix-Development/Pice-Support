@@ -315,6 +315,7 @@
 		color: white;
 		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		margin: 0;
+		margin-top: -12px;
 	}
 
 	/* Cards Container */
@@ -339,9 +340,9 @@
 		transition: all 0.2s;
 		width: 100%;
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		align-items: flex-start;
-		gap: 12px;
+		gap: 16px;
 	}
 
 	.card:hover {
@@ -464,6 +465,7 @@
 
 		.hero-subtitle {
 			font-size: 14px;
+			margin-top: -10px;
 		}
 
 		.cards-container {
@@ -473,7 +475,7 @@
 
 		.card {
 			padding: 24px 20px;
-			gap: 10px;
+			gap: 12px;
 		}
 
 		.card-icon-wrapper {
@@ -516,10 +518,12 @@
 
 		.hero-subtitle {
 			font-size: 12px;
+			margin-top: -8px;
 		}
 
 		.card {
 			padding: 20px 16px;
+			gap: 10px;
 		}
 
 		.card-icon-wrapper {
