@@ -9,11 +9,13 @@
 	let isUnityWebView = false;
 	let uid = '';
 	let locale = '';
+	let env = '';
 
 	// Reactive statement to watch URL parameter changes
 	$: if (browser && $page.url.searchParams) {
 		uid = $page.url.searchParams.get('uid') || '';
 		const urlLocale = $page.url.searchParams.get('locale') || '';
+		const urlEnv = $page.url.searchParams.get('env') || '';
 
 		// Unity에서 전달된 파라미터 확인
 		if (uid && !isUnityWebView) {
@@ -34,6 +36,17 @@
 				language = 'ENG'; // fallback
 			}
 		}
+
+		// 환경 설정 (URL 파라미터가 있을 때만)
+		if (urlEnv) {
+			env = urlEnv;
+			// Store env in localStorage for persistence
+			localStorage.setItem('pice_env', urlEnv);
+			console.log('Environment set to:', urlEnv);
+		} else {
+			// Try to load from localStorage if not in URL
+			env = localStorage.getItem('pice_env') || '';
+		}
 	}
 
 	// Update locale when language changes manually
@@ -52,6 +65,7 @@
 		const params = new URLSearchParams();
 		if (uid) params.append('uid', uid);
 		if (locale) params.append('locale', locale);
+		if (env) params.append('env', env);
 
 		const url = `/inquiry${params.toString() ? '?' + params.toString() : ''}`;
 		goto(url);
@@ -62,6 +76,7 @@
 		const params = new URLSearchParams();
 		if (uid) params.append('uid', uid);
 		if (locale) params.append('locale', locale);
+		if (env) params.append('env', env);
 
 		const url = `/redeem${params.toString() ? '?' + params.toString() : ''}`;
 		goto(url);

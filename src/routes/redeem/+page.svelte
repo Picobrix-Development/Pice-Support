@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import api from '$lib/api';
+	import api, { getCurrentEnvironment } from '$lib/api';
 
 	// State
 	let language = 'KOR';
@@ -13,6 +13,9 @@
 	let successMessage = '';
 	let errorMessage = '';
 	let rewardDetails = null;
+
+	// Environment (test/live based on env parameter)
+	let environment = 'live';
 
 	// Redeem history
 	let history = [];
@@ -25,6 +28,10 @@
 			const uidParam = urlParams.get('uid');
 			const locale = urlParams.get('locale');
 
+			// Determine environment from env parameter
+			const currentEnv = getCurrentEnvironment();
+			environment = (currentEnv === 'test' || currentEnv === 'local' || currentEnv === 'dev') ? 'test' : 'live';
+
 			// Unity에서 전달된 파라미터 확인
 			if (uidParam) {
 				uid = uidParam;
@@ -32,7 +39,11 @@
 				console.log('Unity WebView detected with UID:', uid);
 			} else {
 				// 기본값 설정 (웹 브라우저에서 직접 접근)
-				uid = 'web_user_' + Date.now();
+				// Azure Function requires PlayFabId to be hex-encoded number
+				// Generate 16-character hex string from timestamp
+				const timestamp = Date.now();
+				uid = timestamp.toString(16).toUpperCase().padStart(16, '0');
+				console.log('Web browser test mode - Generated PlayFabId:', uid);
 			}
 
 			// 언어 설정
@@ -53,17 +64,18 @@
 		}
 	});
 
-	// Load redeem history from backend
+	// Load redeem history from backend (disabled for now)
 	async function loadRedeemHistory() {
 		if (!uid) return;
 
-		try {
-			const response = await api.get(`/redeem/history?user_uid=${encodeURIComponent(uid)}`);
-			history = response.data.history || [];
-		} catch (error) {
-			console.error('Failed to load redeem history:', error);
-			// Ignore error - history is optional
-		}
+		// TODO: Implement history endpoint when available
+		// try {
+		// 	const response = await api.get(`/coupon/history?playFabId=${encodeURIComponent(uid)}&environment=${environment}`);
+		// 	history = response.data.history || [];
+		// } catch (error) {
+		// 	console.error('Failed to load redeem history:', error);
+		// 	// Ignore error - history is optional
+		// }
 	}
 
 	// Submit redeem code
@@ -87,40 +99,60 @@
 		isSubmitting = true;
 
 		try {
-			const response = await api.post('/redeem/code', {
-				user_uid: uid,
-				code: redeemCode.trim().toUpperCase()
+			// Call Azure Function via backend API
+			const response = await api.post(`/coupon/use?environment=${environment}`, {
+				playFabId: uid,
+				data: redeemCode.trim().toUpperCase()
 			});
 
 			const result = response.data;
 
-			// Success
-			rewardDetails = result.rewards || [];
-			successMessage = t('redeem_success');
-			redeemCode = '';
+			// Success - check for Azure Function response format
+			if (result.success) {
+				// Extract rewards from Azure Function response
+				const azureData = result.data || {};
+				rewardDetails = azureData.rewards || [];
+				successMessage = t('redeem_success');
+				redeemCode = '';
 
-			// Reload history
-			await loadRedeemHistory();
+				// Reload history
+				await loadRedeemHistory();
+			} else {
+				// Azure Function returned error - check protocolCode
+				const protocolCode = result.protocolCode;
+				const message = result.message || '';
+
+				if (protocolCode === 801 || (protocolCode === 400 && message.includes('Invalid redeem code'))) {
+					errorMessage = t('error_invalid_code');
+				} else if (protocolCode === 802 || message.toLowerCase().includes('expired')) {
+					errorMessage = t('error_expired_code');
+				} else if (protocolCode === 803 || message.toLowerCase().includes('limit')) {
+					errorMessage = t('error_limit_reached');
+				} else {
+					// Don't show internal error messages to users
+					errorMessage = t('error_generic');
+				}
+			}
 
 		} catch (error) {
 			console.error('Redeem error:', error);
 
-			// Handle specific error codes
-			if (error.response?.data?.detail) {
-				const detail = error.response.data.detail;
+			// Check for protocolCode in error response (400 BadRequest case)
+			const protocolCode = error.response?.data?.protocolCode;
+			const message = error.response?.data?.message || '';
 
-				if (detail.includes('invalid') || detail.includes('not found')) {
-					errorMessage = t('error_invalid_code');
-				} else if (detail.includes('expired')) {
-					errorMessage = t('error_expired_code');
-				} else if (detail.includes('already used') || detail.includes('already redeemed')) {
-					errorMessage = t('error_already_used');
-				} else if (detail.includes('limit')) {
-					errorMessage = t('error_limit_reached');
-				} else {
-					errorMessage = detail;
-				}
+			if (protocolCode === 801 || (protocolCode === 400 && message.includes('Invalid redeem code'))) {
+				errorMessage = t('error_invalid_code');
+			} else if (protocolCode === 802 || message.toLowerCase().includes('expired')) {
+				errorMessage = t('error_expired_code');
+			} else if (protocolCode === 803 || message.toLowerCase().includes('limit')) {
+				errorMessage = t('error_limit_reached');
+			} else if (message.toLowerCase().includes('invalid') || message.toLowerCase().includes('not found')) {
+				errorMessage = t('error_invalid_code');
+			} else if (message.toLowerCase().includes('already used') || message.toLowerCase().includes('already redeemed')) {
+				errorMessage = t('error_already_used');
 			} else {
+				// Don't show internal error messages to users
 				errorMessage = t('error_generic');
 			}
 		} finally {
