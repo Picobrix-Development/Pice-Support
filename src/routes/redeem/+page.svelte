@@ -70,7 +70,7 @@
 
 		// TODO: Implement history endpoint when available
 		// try {
-		// 	const response = await api.get(`/coupon/history?playFabId=${encodeURIComponent(uid)}&environment=${environment}`);
+		// 	const response = await api.get(`/redeem/history?playFabId=${encodeURIComponent(uid)}&environment=${environment}`);
 		// 	history = response.data.history || [];
 		// } catch (error) {
 		// 	console.error('Failed to load redeem history:', error);
@@ -100,7 +100,7 @@
 
 		try {
 			// Call Azure Function via backend API
-			const response = await api.post(`/coupon/use?environment=${environment}`, {
+			const response = await api.post(`/redeem/use?environment=${environment}`, {
 				playFabId: uid,
 				data: redeemCode.trim().toUpperCase()
 			});
@@ -119,14 +119,16 @@
 				await loadRedeemHistory();
 			} else {
 				// Azure Function returned error - check protocolCode
+				// Protocol codes: 800=코드 불일치, 801=만료, 802=횟수 초과
 				const protocolCode = result.protocolCode;
 				const message = result.message || '';
+				const messageLower = message.toLowerCase();
 
-				if (protocolCode === 801 || (protocolCode === 400 && message.includes('Invalid redeem code'))) {
+				if (protocolCode === 800 || messageLower.includes('invalid') || messageLower.includes('not found')) {
 					errorMessage = t('error_invalid_code');
-				} else if (protocolCode === 802 || message.toLowerCase().includes('expired')) {
+				} else if (protocolCode === 801 || messageLower.includes('expired')) {
 					errorMessage = t('error_expired_code');
-				} else if (protocolCode === 803 || message.toLowerCase().includes('limit')) {
+				} else if (protocolCode === 802 || messageLower.includes('exceeded') || messageLower.includes('max uses') || messageLower.includes('limit')) {
 					errorMessage = t('error_limit_reached');
 				} else {
 					// Don't show internal error messages to users
@@ -138,18 +140,18 @@
 			console.error('Redeem error:', error);
 
 			// Check for protocolCode in error response (400 BadRequest case)
+			// Protocol codes: 800=코드 불일치, 801=만료, 802=횟수 초과
 			const protocolCode = error.response?.data?.protocolCode;
 			const message = error.response?.data?.message || '';
+			const messageLower = message.toLowerCase();
 
-			if (protocolCode === 801 || (protocolCode === 400 && message.includes('Invalid redeem code'))) {
+			if (protocolCode === 800 || messageLower.includes('invalid') || messageLower.includes('not found')) {
 				errorMessage = t('error_invalid_code');
-			} else if (protocolCode === 802 || message.toLowerCase().includes('expired')) {
+			} else if (protocolCode === 801 || messageLower.includes('expired')) {
 				errorMessage = t('error_expired_code');
-			} else if (protocolCode === 803 || message.toLowerCase().includes('limit')) {
+			} else if (protocolCode === 802 || messageLower.includes('exceeded') || messageLower.includes('max uses') || messageLower.includes('limit')) {
 				errorMessage = t('error_limit_reached');
-			} else if (message.toLowerCase().includes('invalid') || message.toLowerCase().includes('not found')) {
-				errorMessage = t('error_invalid_code');
-			} else if (message.toLowerCase().includes('already used') || message.toLowerCase().includes('already redeemed')) {
+			} else if (messageLower.includes('already used') || messageLower.includes('already redeemed')) {
 				errorMessage = t('error_already_used');
 			} else {
 				// Don't show internal error messages to users
@@ -171,15 +173,15 @@
 	function t(key) {
 		const translations = {
 			KOR: {
-				title: '쿠폰 입력',
-				subtitle: '쿠폰 코드를 입력하고 보상을 받으세요',
-				code_label: '쿠폰 코드',
-				code_placeholder: '쿠폰 코드를 입력하세요',
-				uid_label: 'UID',
+				title: '리딤 코드 입력',
+				subtitle: '리딤 코드를 입력하고 보상을 받으세요',
+				code_label: '리딤 코드',
+				code_placeholder: '리딤 코드를 입력하세요',
+				uid_label: 'USER ID',
 				uid_auto: '(게임에서 자동 설정됨)',
-				submit_button: '쿠폰 사용',
+				submit_button: '리딤 코드 사용',
 				submitting: '처리 중...',
-				redeem_success: '쿠폰이 성공적으로 사용되었습니다!',
+				redeem_success: '리딤 코드가 성공적으로 사용되었습니다!',
 				rewards_received: '받은 보상:',
 				history_title: '사용 내역',
 				history_empty: '사용 내역이 없습니다.',
@@ -192,24 +194,24 @@
 				language_name: '한국어',
 
 				// Errors
-				error_empty_code: '쿠폰 코드를 입력해주세요.',
-				error_no_uid: 'UID가 없습니다. 게임에서 다시 시도해주세요.',
-				error_invalid_code: '유효하지 않은 쿠폰 코드입니다.',
-				error_expired_code: '만료된 쿠폰 코드입니다.',
-				error_already_used: '이미 사용한 쿠폰입니다.',
-				error_limit_reached: '쿠폰 사용 횟수를 초과했습니다.',
-				error_generic: '쿠폰 사용에 실패했습니다. 잠시 후 다시 시도해주세요.'
+				error_empty_code: '리딤 코드를 입력해주세요.',
+				error_no_uid: 'USER ID가 없습니다. 게임에서 다시 시도해주세요.',
+				error_invalid_code: '유효하지 않은 리딤 코드입니다.',
+				error_expired_code: '만료된 리딤 코드입니다.',
+				error_already_used: '이미 사용한 리딤 코드입니다.',
+				error_limit_reached: '리딤 코드 사용 횟수를 초과했습니다.',
+				error_generic: '리딤 코드 사용에 실패했습니다. 잠시 후 다시 시도해주세요.'
 			},
 			ENG: {
 				title: 'Redeem Code',
-				subtitle: 'Enter your coupon code and receive rewards',
-				code_label: 'Coupon Code',
-				code_placeholder: 'Enter coupon code',
-				uid_label: 'UID',
+				subtitle: 'Enter your redeem code and receive rewards',
+				code_label: 'Redeem Code',
+				code_placeholder: 'Enter redeem code',
+				uid_label: 'USER ID',
 				uid_auto: '(Auto-set from game)',
 				submit_button: 'Redeem',
 				submitting: 'Processing...',
-				redeem_success: 'Coupon redeemed successfully!',
+				redeem_success: 'Redeem code used successfully!',
 				rewards_received: 'Rewards received:',
 				history_title: 'Redeem History',
 				history_empty: 'No redeem history.',
@@ -222,24 +224,24 @@
 				language_name: 'English',
 
 				// Errors
-				error_empty_code: 'Please enter a coupon code.',
-				error_no_uid: 'No UID found. Please try again from the game.',
-				error_invalid_code: 'Invalid coupon code.',
-				error_expired_code: 'This coupon has expired.',
-				error_already_used: 'You have already used this coupon.',
-				error_limit_reached: 'Coupon usage limit reached.',
-				error_generic: 'Failed to redeem coupon. Please try again later.'
+				error_empty_code: 'Please enter a redeem code.',
+				error_no_uid: 'No USER ID found. Please try again from the game.',
+				error_invalid_code: 'Invalid redeem code.',
+				error_expired_code: 'This redeem code has expired.',
+				error_already_used: 'You have already used this redeem code.',
+				error_limit_reached: 'Redeem code usage limit reached.',
+				error_generic: 'Failed to use redeem code. Please try again later.'
 			},
 			JPN: {
-				title: 'クーポン入力',
-				subtitle: 'クーポンコードを入力して報酬を受け取ります',
-				code_label: 'クーポンコード',
-				code_placeholder: 'クーポンコードを入力してください',
-				uid_label: 'UID',
+				title: 'リディームコード入力',
+				subtitle: 'リディームコードを入力して報酬を受け取ります',
+				code_label: 'リディームコード',
+				code_placeholder: 'リディームコードを入力してください',
+				uid_label: 'USER ID',
 				uid_auto: '(ゲームから自動設定)',
-				submit_button: 'クーポン使用',
+				submit_button: 'リディームコード使用',
 				submitting: '処理中...',
-				redeem_success: 'クーポンが正常に使用されました！',
+				redeem_success: 'リディームコードが正常に使用されました！',
 				rewards_received: '受け取った報酬：',
 				history_title: '使用履歴',
 				history_empty: '使用履歴はありません。',
@@ -252,13 +254,13 @@
 				language_name: '日本語',
 
 				// Errors
-				error_empty_code: 'クーポンコードを入力してください。',
-				error_no_uid: 'UIDがありません。ゲームから再度お試しください。',
-				error_invalid_code: '無効なクーポンコードです。',
-				error_expired_code: '期限切れのクーポンです。',
-				error_already_used: 'すでに使用したクーポンです。',
-				error_limit_reached: 'クーポンの使用回数を超えました。',
-				error_generic: 'クーポンの使用に失敗しました。しばらくしてから再度お試しください。'
+				error_empty_code: 'リディームコードを入力してください。',
+				error_no_uid: 'USER IDがありません。ゲームから再度お試しください。',
+				error_invalid_code: '無効なリディームコードです。',
+				error_expired_code: '期限切れのリディームコードです。',
+				error_already_used: 'すでに使用したリディームコードです。',
+				error_limit_reached: 'リディームコードの使用回数を超えました。',
+				error_generic: 'リディームコードの使用に失敗しました。しばらくしてから再度お試しください。'
 			}
 		};
 		return translations[language]?.[key] || key;
@@ -305,7 +307,7 @@
 			<!-- Title -->
 			<div class="flex items-center mb-4 pb-4 border-b border-gray-200">
 				<div class="w-12 h-12 md:w-14 md:h-14 bg-green-50 rounded-2xl flex items-center justify-center flex-shrink-0 mr-3 md:mr-4">
-					<img src="/images/icon_coupon.png" alt="Coupon" class="w-8 h-8 md:w-10 md:h-10 object-contain" />
+					<img src="/images/icon_coupon.png" alt="Redeem" class="w-8 h-8 md:w-10 md:h-10 object-contain" />
 				</div>
 				<div class="flex-1">
 					<h1 class="text-lg md:text-xl font-bold text-gray-900">
@@ -333,7 +335,7 @@
 					>
 				</div>
 
-				<!-- Coupon Code -->
+				<!-- Redeem Code -->
 				<div>
 					<label class="block text-sm font-medium text-gray-900 mb-2">
 						{t('code_label')} <span class="text-red-500">*</span>

@@ -89,8 +89,8 @@
 			subtitle: '무엇을 도와드릴까요?',
 			support_title: '1:1 문의',
 			support_description: '게임 관련 문의사항을 남겨주세요',
-			redeem_title: '쿠폰 입력',
-			redeem_description: '쿠폰 코드를 입력하고 보상을 받으세요',
+			redeem_title: '리딤 코드 입력',
+			redeem_description: '리딤 코드를 입력하고 보상을 받으세요',
 			go_button: '바로가기',
 			language_name: '한국어'
 		},
@@ -100,7 +100,7 @@
 			support_title: '1:1 Inquiry',
 			support_description: 'Submit your game-related inquiries',
 			redeem_title: 'Redeem Code',
-			redeem_description: 'Enter coupon code and receive rewards',
+			redeem_description: 'Enter redeem code and receive rewards',
 			go_button: 'Go',
 			language_name: 'English'
 		},
@@ -109,8 +109,8 @@
 			subtitle: 'どのようなご用件でしょうか？',
 			support_title: '1:1 お問い合わせ',
 			support_description: 'ゲーム関連のお問い合わせを送信してください',
-			redeem_title: 'クーポン入力',
-			redeem_description: 'クーポンコードを入力して報酬を受け取ります',
+			redeem_title: 'リディームコード入力',
+			redeem_description: 'リディームコードを入力して報酬を受け取ります',
 			go_button: '進む',
 			language_name: '日本語'
 		}
@@ -192,7 +192,7 @@
 			class="card"
 		>
 			<div class="card-icon-wrapper card-icon-green">
-				<img src="/images/icon_coupon.png" class="card-icon" alt="Coupon">
+				<img src="/images/icon_coupon.png" class="card-icon" alt="Redeem">
 			</div>
 			<div class="card-content">
 				<h2 class="card-title">{t('redeem_title')}</h2>
