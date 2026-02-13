@@ -47,11 +47,26 @@ const api = axios.create({
   timeout: 45000  // 45 seconds for external API calls
 });
 
-// Request interceptor to dynamically set baseURL based on current environment
+// Request interceptor to dynamically set baseURL and add audit headers
 api.interceptors.request.use(
   (config) => {
     const env = getEnvironment();
     config.baseURL = getApiUrl(env);
+
+    // Add source and user headers for audit logging
+    if (typeof window !== 'undefined') {
+      config.headers['x-source'] = 'support';
+
+      // Try to get user info from localStorage (saved from inquiry form)
+      const userEmail = localStorage.getItem('pice_user_email');
+      const userUid = localStorage.getItem('pice_user_uid');
+      if (userEmail) {
+        config.headers['x-user-email'] = userEmail;
+      } else if (userUid) {
+        config.headers['x-user-email'] = `player:${userUid}`;
+      }
+    }
+
     return config;
   },
   (error) => {

@@ -234,6 +234,7 @@ To proceed with deletion, please enter the following:
 			if (uid) {
 				formData.user_uid = uid;
 				isUnityWebView = true;
+				localStorage.setItem('pice_user_uid', uid);
 				console.log('Unity WebView detected with UID:', uid);
 			} else {
 				// 기본값 설정 (웹 브라우저에서 직접 접근)
@@ -276,6 +277,11 @@ To proceed with deletion, please enter the following:
 		formData.email = `${emailPart}@${domainPart}`;
 	} else if (emailPart && selectedDomain !== '직접 입력') {
 		formData.email = `${emailPart}@${selectedDomain}`;
+	}
+
+	// Save email to localStorage for audit headers
+	$: if (browser && formData.email && formData.email.includes('@')) {
+		localStorage.setItem('pice_user_email', formData.email);
 	}
 
 	// Update formData.language when language changes
