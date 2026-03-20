@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import api from '$lib/api';
+	import axios from 'axios';
 
 	let language = 'KOR';
 	let isUnityWebView = false;
@@ -88,9 +88,11 @@
 
 	let oddsData = { ...defaultOdds };
 
+	const LIVE_API_URL = 'https://pice-console-live-api.azurewebsites.net/api/v1';
+
 	async function loadOddsFromApi() {
 		try {
-			const response = await api.get('/card-pack-odds/odds/public');
+			const response = await axios.get(`${LIVE_API_URL}/card-pack-odds/odds/public`);
 			if (response.data.success && response.data.packs) {
 				const apiOdds = { wildcard: { isSelectable: true } };
 				for (const pack of response.data.packs) {
