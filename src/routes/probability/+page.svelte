@@ -310,11 +310,7 @@
 									{/each}
 								</tbody>
 							</table>
-							<div class="higher-grade-notice">
-								<span class="notice-icon">ℹ️</span>
-								<span>{t('pack_higher_grade_notice')}</span>
-							</div>
-						{/if}
+							{/if}
 					</div>
 				</div>
 			{/each}
@@ -350,11 +346,12 @@
 			<!-- Notes -->
 			<div class="info-card notes-card">
 				<h3 class="info-title">{t('note_title')}</h3>
-				<ul class="notes-list">
+				<ol class="notes-list">
+					<li>{t('pack_higher_grade_notice')}</li>
 					<li>{t('note_1')}</li>
 					<li>{t('note_2')}</li>
 					<li>{t('note_3')}</li>
-				</ul>
+				</ol>
 			</div>
 		</section>
 	</div>
@@ -479,25 +476,7 @@
 		padding: 16px;
 	}
 
-	.higher-grade-notice {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		margin-top: 12px;
-		padding: 10px 12px;
-		background: #f0f9ff;
-		border-radius: 8px;
-		font-size: 12px;
-		color: #3b82f6;
-		line-height: 1.4;
-	}
-
-	.notice-icon {
-		font-size: 14px;
-		flex-shrink: 0;
-	}
-
-	.wildcard-desc {
+.wildcard-desc {
 		font-size: 14px;
 		color: #374151;
 		line-height: 1.6;
@@ -684,10 +663,11 @@
 
 	.notes-list {
 		margin: 0;
-		padding: 0 0 0 18px;
+		padding: 0 0 0 22px;
 		display: flex;
 		flex-direction: column;
 		gap: 6px;
+		list-style-type: decimal;
 	}
 
 	.notes-list li {
