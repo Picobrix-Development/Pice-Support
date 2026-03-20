@@ -133,6 +133,7 @@
 			guaranteed_label: '보장',
 			guaranteed_desc: '{star}성 카드 {count}장 이상 획득 확률 100%',
 			additional_rates: '추가 카드 획득 확률',
+			pack_higher_grade_notice: '각 팩에 포함된 카드는 상위 등급의 카드가 포함될 수 있습니다.',
 			pack_normal: '노멀 팩',
 			pack_gold: '골드 팩',
 			pack_super: '수퍼 팩',
@@ -166,6 +167,7 @@
 			guaranteed_label: 'Guaranteed',
 			guaranteed_desc: '100% chance to get at least {count} card(s) of {star}-star or higher',
 			additional_rates: 'Additional Card Drop Rates',
+			pack_higher_grade_notice: 'Each pack may contain cards of a higher grade.',
 			pack_normal: 'Normal Pack',
 			pack_gold: 'Gold Pack',
 			pack_super: 'Super Pack',
@@ -199,6 +201,7 @@
 			guaranteed_label: '保証',
 			guaranteed_desc: '{star}星カード{count}枚以上獲得確率100%',
 			additional_rates: '追加カード獲得確率',
+			pack_higher_grade_notice: '各パックには上位グレードのカードが含まれる場合があります。',
 			pack_normal: 'ノーマルパック',
 			pack_gold: 'ゴールドパック',
 			pack_super: 'スーパーパック',
@@ -307,6 +310,10 @@
 									{/each}
 								</tbody>
 							</table>
+							<div class="higher-grade-notice">
+								<span class="notice-icon">ℹ️</span>
+								<span>{t('pack_higher_grade_notice')}</span>
+							</div>
 						{/if}
 					</div>
 				</div>
@@ -470,6 +477,24 @@
 
 	.odds-body {
 		padding: 16px;
+	}
+
+	.higher-grade-notice {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		margin-top: 12px;
+		padding: 10px 12px;
+		background: #f0f9ff;
+		border-radius: 8px;
+		font-size: 12px;
+		color: #3b82f6;
+		line-height: 1.4;
+	}
+
+	.notice-icon {
+		font-size: 14px;
+		flex-shrink: 0;
 	}
 
 	.wildcard-desc {
