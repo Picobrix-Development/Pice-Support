@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import api from '$lib/api';
 
 	let language = 'KOR';
 	let isUnityWebView = false;
@@ -49,81 +50,65 @@
 	const cardPacks = [
 		{
 			id: 'normal',
-			star: 1,
-			color: '#F5A623',
+			color: '#4A90D9',
 			bgColor: '#FFF8E1',
 			borderColor: '#F5A623',
-			image: '/images/pack_1star.png',
+			image: '/images/Icon_Cardpack_Normal.png',
 		},
 		{
-			id: 'rare',
-			star: 2,
-			color: '#4A90D9',
+			id: 'gold',
+			color: '#F5A623',
 			bgColor: '#E3F2FD',
 			borderColor: '#4A90D9',
-			image: '/images/pack_2star.png',
+			image: '/images/Icon_Cardpack_Gold.png',
 		},
 		{
-			id: 'epic',
-			star: 3,
+			id: 'super',
 			color: '#9B59B6',
 			bgColor: '#F3E5F5',
 			borderColor: '#9B59B6',
-			image: '/images/pack_3star.png',
+			image: '/images/Icon_Cardpack_Super.png',
 		},
 		{
-			id: 'legendary',
-			star: 4,
+			id: 'wildcard',
 			color: '#E91E63',
 			bgColor: '#FCE4EC',
 			borderColor: '#E91E63',
-			image: '/images/pack_4star.png',
+			image: '/images/Icon_Cardpack_Wild.png',
 		},
 	];
 
-	// 확률 데이터 - CMS에서 업데이트 가능
-	const oddsData = {
-		normal: {
-			guaranteed: { star: 1, count: 1 },
-			rates: [
-				{ star: 1, rate: 58.2 },
-				{ star: 2, rate: 24.8 },
-				{ star: 3, rate: 13.9 },
-				{ star: 4, rate: 2.8 },
-				{ star: 5, rate: 0.3 },
-			]
-		},
-		rare: {
-			guaranteed: { star: 2, count: 1 },
-			rates: [
-				{ star: 1, rate: 38.2 },
-				{ star: 2, rate: 44.5 },
-				{ star: 3, rate: 13.0 },
-				{ star: 4, rate: 3.6 },
-				{ star: 5, rate: 0.7 },
-			]
-		},
-		epic: {
-			guaranteed: { star: 3, count: 1 },
-			rates: [
-				{ star: 1, rate: 30.6 },
-				{ star: 2, rate: 30.6 },
-				{ star: 3, rate: 30.6 },
-				{ star: 4, rate: 7.0 },
-				{ star: 5, rate: 1.2 },
-			]
-		},
-		legendary: {
-			guaranteed: { star: 4, count: 1 },
-			rates: [
-				{ star: 1, rate: 20.0 },
-				{ star: 2, rate: 25.0 },
-				{ star: 3, rate: 30.0 },
-				{ star: 4, rate: 20.0 },
-				{ star: 5, rate: 5.0 },
-			]
-		},
+	// 확률 데이터 - API에서 로드, fallback 하드코딩
+	const defaultOdds = {
+		normal: { rates: [{ star: 1, rate: 58.2 }, { star: 2, rate: 24.8 }, { star: 3, rate: 13.9 }, { star: 4, rate: 2.8 }, { star: 5, rate: 0.3 }] },
+		gold: { rates: [{ star: 1, rate: 38.2 }, { star: 2, rate: 44.5 }, { star: 3, rate: 13.0 }, { star: 4, rate: 3.6 }, { star: 5, rate: 0.7 }] },
+		super: { rates: [{ star: 1, rate: 30.6 }, { star: 2, rate: 30.6 }, { star: 3, rate: 30.6 }, { star: 4, rate: 7.0 }, { star: 5, rate: 1.2 }] },
+		wildcard: { isSelectable: true },
 	};
+
+	let oddsData = { ...defaultOdds };
+
+	async function loadOddsFromApi() {
+		try {
+			const response = await api.get('/card-pack-odds/odds/public');
+			if (response.data.success && response.data.packs) {
+				const apiOdds = { wildcard: { isSelectable: true } };
+				for (const pack of response.data.packs) {
+					if (pack.pack_type === 'wildcard') continue;
+					apiOdds[pack.pack_type] = {
+						rates: pack.rates.sort((a, b) => a.star - b.star),
+					};
+				}
+				oddsData = apiOdds;
+			}
+		} catch (e) {
+			console.warn('Failed to load odds from API, using defaults:', e.message);
+		}
+	}
+
+	onMount(() => {
+		if (browser) loadOddsFromApi();
+	});
 
 	// Min 값 데이터 - CMS에서 업데이트 가능
 	const minData = [
@@ -146,10 +131,11 @@
 			guaranteed_label: '보장',
 			guaranteed_desc: '{star}성 카드 {count}장 이상 획득 확률 100%',
 			additional_rates: '추가 카드 획득 확률',
-			pack_normal: '일반 팩',
-			pack_rare: '레어 팩',
-			pack_epic: '에픽 팩',
-			pack_legendary: '레전더리 팩',
+			pack_normal: '노멀 팩',
+			pack_gold: '골드 팩',
+			pack_super: '수퍼 팩',
+			pack_wildcard: '와일드카드 팩',
+			wildcard_desc: '노멀, 골드, 수퍼팩에 포함되어 있는 카드 중 원하는 카드 1장을 선택하여 획득할 수 있습니다.',
 			system_title_1: '카드팩 구성',
 			system_desc_1: '카드팩에 포함된 크라운 수에 상응하는 카드를 최소 1장 이상 획득할 확률이 100%입니다.',
 			system_title_2: 'Min 값 안내',
@@ -179,9 +165,10 @@
 			guaranteed_desc: '100% chance to get at least {count} card(s) of {star}-star or higher',
 			additional_rates: 'Additional Card Drop Rates',
 			pack_normal: 'Normal Pack',
-			pack_rare: 'Rare Pack',
-			pack_epic: 'Epic Pack',
-			pack_legendary: 'Legendary Pack',
+			pack_gold: 'Gold Pack',
+			pack_super: 'Super Pack',
+			pack_wildcard: 'Wild Card Pack',
+			wildcard_desc: 'You can select and obtain 1 card of your choice from cards included in Normal, Gold, and Super packs.',
 			system_title_1: 'Card Pack Composition',
 			system_desc_1: 'Each card pack guarantees at least one card corresponding to the number of crowns included in the pack.',
 			system_title_2: 'Min Value Guide',
@@ -211,9 +198,10 @@
 			guaranteed_desc: '{star}星カード{count}枚以上獲得確率100%',
 			additional_rates: '追加カード獲得確率',
 			pack_normal: 'ノーマルパック',
-			pack_rare: 'レアパック',
-			pack_epic: 'エピックパック',
-			pack_legendary: 'レジェンダリーパック',
+			pack_gold: 'ゴールドパック',
+			pack_super: 'スーパーパック',
+			pack_wildcard: 'ワイルドカードパック',
+			wildcard_desc: 'ノーマル、ゴールド、スーパーパックに含まれるカードの中から、お好きなカード1枚を選択して獲得できます。',
 			system_title_1: 'カードパック構成',
 			system_desc_1: 'カードパックに含まれるクラウン数に相応するカードを最低1枚以上獲得する確率は100%です。',
 			system_title_2: 'Min値ガイド',
@@ -240,12 +228,8 @@
 		return t(`pack_${packId}`);
 	}
 
-	function getGuaranteedText(pack) {
-		const data = oddsData[pack.id];
-		if (!data) return '';
-		return t('guaranteed_desc')
-			.replace('{star}', data.guaranteed.star)
-			.replace('{count}', data.guaranteed.count);
+	function getPackDesc(pack) {
+		return t('pack_desc_' + pack.id);
 	}
 
 	function renderStars(count) {
@@ -277,24 +261,6 @@
 	</div>
 
 	<div class="content-container">
-		<!-- Card Pack Types -->
-		<section class="section">
-			<h2 class="section-title">{t('section_packs')}</h2>
-			<div class="pack-grid">
-				{#each cardPacks as pack}
-					<div class="pack-card" style="border-color: {pack.borderColor};">
-						<div class="pack-image-wrapper" style="background-color: {pack.bgColor};">
-							<img src={pack.image} alt="{getPackName(pack.id)}" class="pack-image" />
-						</div>
-						<div class="pack-info">
-							<span class="pack-name">{getPackName(pack.id)}</span>
-							<span class="pack-stars" style="color: {pack.color};">{renderStars(pack.star)}</span>
-						</div>
-					</div>
-				{/each}
-			</div>
-		</section>
-
 		<!-- Odds Tables -->
 		<section class="section">
 			<h2 class="section-title">{t('section_odds')}</h2>
@@ -302,44 +268,44 @@
 			{#each cardPacks as pack}
 				{@const odds = oddsData[pack.id]}
 				<div class="odds-card">
-					<div class="odds-header" style="background-color: {pack.bgColor}; border-left: 4px solid {pack.borderColor};">
+					<div class="odds-header" style="border-left: 4px solid {pack.borderColor};">
+						<img src={pack.image} alt="{getPackName(pack.id)}" class="odds-pack-icon" />
 						<span class="odds-pack-name" style="color: {pack.color};">{getPackName(pack.id)}</span>
-						<span class="odds-guaranteed-badge">
-							{t('guaranteed_label')}: {odds.guaranteed.star}{t('star_label')} x{odds.guaranteed.count}
-						</span>
 					</div>
 
 					<div class="odds-body">
-						<p class="guaranteed-text">{getGuaranteedText(pack)}</p>
-
-						<p class="additional-label">{t('additional_rates')}</p>
-						<table class="odds-table">
-							<thead>
-								<tr>
-									<th>{t('star_label')}</th>
-									<th>{t('rate_label')}</th>
-								</tr>
-							</thead>
-							<tbody>
-								{#each odds.rates as row}
+						{#if odds.isSelectable}
+							<p class="wildcard-desc">{t('wildcard_desc')}</p>
+						{:else}
+							<p class="additional-label">{t('additional_rates')}</p>
+							<table class="odds-table">
+								<thead>
 									<tr>
-										<td>
-											<span class="star-display" class:star-5={row.star === 5} class:star-4={row.star === 4} class:star-3={row.star === 3}>
-												{renderStars(row.star)} ({row.star}{t('star_label')})
-											</span>
-										</td>
-										<td>
-											<div class="rate-cell">
-												<div class="rate-bar-bg">
-													<div class="rate-bar" style="width: {row.rate}%; background-color: {pack.color};"></div>
-												</div>
-												<span class="rate-value">{row.rate}%</span>
-											</div>
-										</td>
+										<th>{t('star_label')}</th>
+										<th>{t('rate_label')}</th>
 									</tr>
-								{/each}
-							</tbody>
-						</table>
+								</thead>
+								<tbody>
+									{#each odds.rates as row}
+										<tr>
+											<td>
+												<span class="star-display" class:star-5={row.star === 5} class:star-4={row.star === 4} class:star-3={row.star === 3}>
+													{renderStars(row.star)} ({row.star}{t('star_label')})
+												</span>
+											</td>
+											<td>
+												<div class="rate-cell">
+													<div class="rate-bar-bg">
+														<div class="rate-bar" style="width: {row.rate}%; background-color: {pack.color};"></div>
+													</div>
+													<span class="rate-value">{row.rate}%</span>
+												</div>
+											</td>
+										</tr>
+									{/each}
+								</tbody>
+							</table>
+						{/if}
 					</div>
 				</div>
 			{/each}
@@ -388,7 +354,15 @@
 <style>
 	.page-container {
 		min-height: 100vh;
+		max-height: 100vh;
 		background-color: #f5f5f7;
+		overflow-y: scroll !important;
+		-webkit-overflow-scrolling: touch;
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
 	}
 
 	/* Header */
@@ -464,55 +438,6 @@
 		border-left: 3px solid #3b82f6;
 	}
 
-	/* Pack Grid */
-	.pack-grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 12px;
-	}
-
-	.pack-card {
-		background: white;
-		border-radius: 16px;
-		padding: 16px;
-		border: 2px solid;
-		text-align: center;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-	}
-
-	.pack-image-wrapper {
-		width: 80px;
-		height: 80px;
-		border-radius: 12px;
-		margin: 0 auto 10px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.pack-image {
-		width: 64px;
-		height: 64px;
-		object-fit: contain;
-	}
-
-	.pack-info {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-
-	.pack-name {
-		font-size: 14px;
-		font-weight: 700;
-		color: #1f2937;
-	}
-
-	.pack-stars {
-		font-size: 12px;
-		letter-spacing: 1px;
-	}
-
 	/* Odds Card */
 	.odds-card {
 		background: white;
@@ -526,8 +451,14 @@
 		padding: 14px 16px;
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		gap: 8px;
+		justify-content: flex-start;
+		gap: 10px;
+	}
+
+	.odds-pack-icon {
+		width: 36px;
+		height: 36px;
+		object-fit: contain;
 	}
 
 	.odds-pack-name {
@@ -535,28 +466,19 @@
 		font-weight: 700;
 	}
 
-	.odds-guaranteed-badge {
-		font-size: 11px;
-		font-weight: 600;
-		color: #059669;
-		background: #ecfdf5;
-		padding: 4px 10px;
-		border-radius: 20px;
-		white-space: nowrap;
-	}
-
 	.odds-body {
 		padding: 16px;
 	}
 
-	.guaranteed-text {
-		font-size: 13px;
-		color: #6b7280;
-		margin: 0 0 14px 0;
-		padding: 10px 12px;
-		background: #f9fafb;
-		border-radius: 8px;
-		line-height: 1.5;
+	.wildcard-desc {
+		font-size: 14px;
+		color: #374151;
+		line-height: 1.6;
+		margin: 0;
+		padding: 12px 14px;
+		background: #fef3c7;
+		border-radius: 10px;
+		border-left: 3px solid #f59e0b;
 	}
 
 	.additional-label {
